@@ -1,103 +1,189 @@
 body {
-    background: linear-gradient(135deg, #00ff9f, #00b8ff, #001eff, #bd00ff, #d600ff);
-    font-family: 'Press Start 2P', cursive;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle, #001eff, #000);
+  font-family: 'Orbitron', sans-serif;
+  color: #00ff9f;
+  text-align: center;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #ffffff;
-    text-shadow: 0 0 10px #fff, 0 0 20px #00ff9f, 0 0 30px #00ff9f;
+#loadingScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #001eff, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  z-index: 1000;
+  cursor: pointer; /* Encourage user interaction */
 }
 
-#startButton {
-    background-color: #00b8ff;
-    border: none;
-    padding: 20px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    border-radius: 10px;
-    color: #ffffff;
-    text-shadow: 0 0 5px #00b8ff;
+.hidden {
+  display: none !important;
 }
 
-#startButton:hover {
-    background-color: #00ff9f;
-    text-shadow: 0 0 15px #00ff9f;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
 }
 
-#message {
-    font-size: 2rem;
-    visibility: hidden;
-    margin-top: 50px;
-    text-align: center;
-    color: #ffffff;
-    text-shadow: 0 0 10px #fff, 0 0 20px #d600ff;
+.title {
+  font-size: 3rem;
+  text-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff, 0 0 30px #001eff;
+  margin-bottom: 20px;
+  animation: glow 2s infinite alternate;
 }
 
-#score {
-    font-size: 2rem;
-    color: #ffffff;
-    margin-top: 20px;
-    text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff;
+@keyframes glow {
+  0% { text-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff, 0 0 30px #001eff; }
+  100% { text-shadow: 0 0 20px #00ff9f, 0 0 40px #00b8ff, 0 0 60px #001eff; }
+}
+
+button {
+  background: #bd00ff;
+  color: #00ff9f;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.1);
 }
 
 #gameContainer {
-    display: none;
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    height: 600px;
-    max-height: 600px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 20px;
-    box-shadow: 0 0 20px #00ff9f;
-    padding: 20px;
+  display: none;
+  margin-top: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
 }
 
-#funMessages {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1rem;
-    color: #ff00ff;
-    text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ff9f;
-    padding: 10px;
-    max-width: 300px;
-    visibility: hidden;
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-#funMessages p {
-    margin: 5px;
+#scoreboard {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00ff9f;
 }
 
-.mobileControls {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+#flirtyMessages {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00b8ff;
+  font-size: 1.2rem;
+  color: #bd00ff;
+  animation: pulse 2s infinite;
 }
 
-.mobileButton {
-    background-color: #00b8ff;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: white;
-    box-shadow: 0 0 10px #00b8ff;
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }
 
-.mobileButton:hover {
-    background-color: #00ff9f;
+canvas {
+  border: 5px solid #00ff9f;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px #00b8ff;
+}
+
+#timerDisplay {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px #00ff9f;
+}
+
+#message {
+  display: none;
+  font-size: 2rem;
+  text-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff;
+  margin-top: 20px;
+}
+
+#mobileControls {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#mobileControls.visible {
+  display: flex; /* Show mobile controls when this class is added */
+}
+
+#mobileControls button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+}
+
+.balloon {
+  position: absolute;
+  width: 50px;
+  height: 70px;
+  background: #00ff9f;
+  border-radius: 50%;
+  animation: float 5s ease-in infinite;
+  box-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh); }
+  100% { transform: translateY(-100vh); }
+}
+
+/* Cyberpunk Background */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://i.imgur.com/3QZQZ9q.png') repeat;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  canvas {
+    width: 80vw;
+    height: 60vh;
+  }
+
+  #mobileControls {
+    display: none; /* Hide by default, show with JavaScript */
+  }
 }
