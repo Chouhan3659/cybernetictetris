@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini Tetris Game</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> <!-- Cybernetic font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
-            background: radial-gradient(circle, #00ff9f, #00b8ff, #001eff, #bd00ff, #d600ff);
+            background: linear-gradient(135deg, #00ff9f, #00b8ff, #001eff, #bd00ff, #d600ff);
             font-family: 'Press Start 2P', cursive;
             color: white;
             display: flex;
@@ -54,6 +54,18 @@
             margin-top: 20px;
             text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff;
         }
+        #gameContainer {
+            display: none;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            max-height: 600px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 0 20px #00ff9f;
+            padding: 20px;
+        }
         #funMessages {
             position: absolute;
             top: 20px;
@@ -63,45 +75,10 @@
             text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ff9f;
             padding: 10px;
             max-width: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             visibility: hidden;
         }
         #funMessages p {
             margin: 5px;
-        }
-        #gameContainer {
-            display: none;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 600px;
-            max-height: 800px;
-            margin-top: 30px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 20px;
-            box-shadow: 0 0 20px #00ff9f;
-        }
-        .tetrisBlock {
-            width: 30px;
-            height: 30px;
-            background-color: #00ff9f;
-            border-radius: 5px;
-            box-shadow: 0 0 10px #00b8ff;
-        }
-        .balloonAnimation {
-            animation: pop 1s ease-out forwards;
-        }
-        @keyframes pop {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(3);
-                opacity: 0;
-            }
         }
         .mobileControls {
             display: flex;
@@ -160,6 +137,7 @@
         let score = 0;
         let timer;
         let gameStarted = false;
+        let intervalId;
 
         // Play background music when page loads
         bgMusic.play();
@@ -183,19 +161,20 @@
                 timeLeft--;
             }, 1000);
 
-            setInterval(function() {
+            // Mock Tetris Game Loop (this should be replaced with real game logic)
+            intervalId = setInterval(function() {
                 if (gameStarted) {
-                    score++; 
+                    score++;
                     updateScore();
                     if (score >= 10) {
-                        showBalloons();
+                        showFlirtyMessage();
                     }
                     if (score >= 20) {
-                        clearInterval(timer);
+                        clearInterval(intervalId);
                         endGame();
                     }
                 }
-            }, 100);
+            }, 1000);  // Game loop (1 second per score increment for testing)
         }
 
         function endGame() {
@@ -207,15 +186,9 @@
             scoreElement.textContent = `Score: ${score}`;
         }
 
-        function showBalloons() {
-            let balloon = document.createElement('div');
-            balloon.classList.add('balloonAnimation');
-            balloon.style.left = `${Math.random() * window.innerWidth}px`;
-            balloon.style.top = `${Math.random() * window.innerHeight}px`;
-            document.body.appendChild(balloon);
-            setTimeout(function() {
-                balloon.remove();
-            }, 1000);
+        function showFlirtyMessage() {
+            // Show flirty message after score reaches 10
+            funMessages.style.visibility = 'visible';
         }
 
         // Mobile Controls
@@ -224,15 +197,15 @@
         let rightButton = document.getElementById('rightButton');
 
         leftButton.addEventListener('click', () => {
-            // Implement move left
+            // Implement move left (Tetris logic)
         });
 
         downButton.addEventListener('click', () => {
-            // Implement move down
+            // Implement move down (Tetris logic)
         });
 
         rightButton.addEventListener('click', () => {
-            // Implement move right
+            // Implement move right (Tetris logic)
         });
     </script>
 
