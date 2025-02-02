@@ -12,9 +12,23 @@
     <h1 class="title">BEAT IT TO REVEAL IT</h1>
     <button id="startButton">hehe lets play :P</button>
     <div id="gameContainer" class="hidden">
+      <div id="sidebar">
+        <div id="scoreboard">
+          <div>Score: <span id="currentScore">0</span></div>
+          <div>High Score: <span id="highScore">0</span></div>
+        </div>
+        <div id="flirtyMessages">
+          <p>Drop it like it's hot! 😘</p>
+        </div>
+      </div>
       <canvas id="tetris" width="300" height="600"></canvas>
-      <div id="scoreDisplay">Score: 0</div>
       <div id="timerDisplay">Time: 2:00</div>
+      <div id="mobileControls" class="hidden">
+        <button id="moveLeft">←</button>
+        <button id="moveRight">→</button>
+        <button id="rotate">↻</button>
+        <button id="drop">↓</button>
+      </div>
     </div>
     <div id="message" class="hidden">
       <p>you're too cute to complete it</p>
