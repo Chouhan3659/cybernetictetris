@@ -13,6 +13,8 @@ const moveRightButton = document.getElementById('moveRight');
 const rotateButton = document.getElementById('rotate');
 const dropButton = document.getElementById('drop');
 const flirtyMessages = document.getElementById('flirtyMessages');
+const loadingScreen = document.getElementById('loadingScreen');
+const container = document.querySelector('.container');
 
 const ROWS = 20;
 const COLS = 10;
@@ -208,12 +210,13 @@ document.addEventListener('keydown', event => {
   }
 });
 
+// Start Game
 startButton.addEventListener('click', () => {
   startButton.style.display = 'none';
   gameContainer.style.display = 'flex';
   mobileControls.style.display = 'flex';
   backgroundMusic.play().catch(() => {
-    alert("Click anywhere to start the music!");
+    alert("Tap anywhere to start the music!");
   });
   timerInterval = setInterval(updateTimer, 1000);
   gameInterval = setInterval(() => {
@@ -225,4 +228,6 @@ startButton.addEventListener('click', () => {
 // Fix for autoplay policy
 document.body.addEventListener('click', () => {
   backgroundMusic.play();
+  loadingScreen.classList.add('hidden');
+  container.classList.remove('hidden');
 });
