@@ -33,209 +33,201 @@ let gameInterval;
 const board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 
 const shapes = [
-  [[1, 1, 1, 1]], // I
-  [[1, 1, 1], [0, 1, 0]], // T
-  [[1, 1], [1, 1]], // O
-  [[1, 1, 0], [0, 1, 1]], // S
-  [[0, 1, 1], [1, 1, 0]], // Z
-  [[1, 1, 1], [1, 0, 0]], // L
-  [[1, 1, 1], [0, 0, 1]] // J
+  [[1, 1, 1, 1]], [[1, 1, 1],
+   [0, 1, 0]],
+
+  [[1, 1],
+   [1, 1]],
+
+  [[0, 1, 1],
+   [1, 1, 0]],
+
+  [[1, 1, 0],
+   [0, 1, 1]],
+
+  [[1, 0, 0],
+   [1, 1, 1]],
+
+  [[0, 0, 1],
+   [1, 1, 1]],
+
+  [[0, 1],
+   [1, 1],
+   [0, 1]]
 ];
 
-let currentPiece = {
-  shape: shapes[Math.floor(Math.random() * shapes.length)],
-  x: 3,
-  y: 0,
-  color: COLORS[Math.floor(Math.random() * COLORS.length)]
-};
+let currentShape;
+let currentPosition;
 
-const flirtyPhrases = [
-  "You're a natural! 😉",
-  "Looking good! 😘",
-  "Drop it like it's hot! 🔥",
-  "You're crushing it! 💪",
-  "Wow, you're amazing! 😍",
-  "Keep it up, cutie! 😏",
-  "You're unstoppable! 🚀"
-];
-
-function drawBlock(x, y, color) {
-  context.fillStyle = color;
-  context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-  context.strokeStyle = '#000';
-  context.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+function startGame() {
+  score = 0;
+  timeLeft = 120;
+  currentScoreDisplay.textContent = score;
+  highScoreDisplay.textContent = highScore;
+  gameContainer.classList.remove('hidden');
+  loadingScreen.classList.add('hidden');
+  backgroundMusic.play();
+  generateNewShape();
+  updateTimer();
+  gameInterval = setInterval(updateGame, 1000);
 }
 
-function drawBoard() {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  board.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value) {
-        drawBlock(x, y, value);
+function generateNewShape() {
+  const randomIndex = Math.floor(Math.random() * shapes.length);
+  currentShape = shapes[randomIndex];
+  currentPosition = { x: Math.floor(COLS / 2) - 1, y: 0 };
+  if (isCollision()) {
+    clearInterval(gameInterval);
+    message.classList.remove('hidden');
+  }
+}
+
+function isCollision() {
+  for (let row = 0; row < currentShape.length; row++) {
+    for (let col = 0; col < currentShape[row].length; col++) {
+      if (currentShape[row][col] && 
+          (board[currentPosition.y + row] && 
+          board[currentPosition.y + row][currentPosition.x + col]) !== 0) {
+        return true;
       }
-    });
-  });
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value) {
-        drawBlock(currentPiece.x + x, currentPiece.y + y, currentPiece.color);
-      }
-    });
-  });
+    }
+  }
+  return false;
 }
 
-function collide() {
-  return currentPiece.shape.some((row, y) => {
-    return row.some((value, x) => {
-      return value && (board[currentPiece.y + y] && board[currentPiece.y + y][currentPiece.x + x]) !== 0;
-    });
-  });
+function updateGame() {
+  if (!isCollision()) {
+    currentPosition.y++;
+  } else {
+    mergeShape();
+    clearLines();
+    generateNewShape();
+  }
+  draw();
 }
 
-function merge() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
+function mergeShape() {
+  currentShape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
       if (value) {
-        board[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+        board[currentPosition.y + rowIndex][currentPosition.x + colIndex] = value;
       }
     });
   });
 }
 
 function clearLines() {
-  let linesCleared = 0;
-  board.forEach((row, y) => {
-    if (row.every(cell => cell !== 0)) {
-      board.splice(y, 1);
+  for (let row = ROWS - 1; row >= 0; row--) {
+    if (board[row].every(value => value !== 0)) {
+      board.splice(row, 1);
       board.unshift(Array(COLS).fill(0));
-      linesCleared++;
+      score += 10;
+      currentScoreDisplay.textContent = score;
+      if (score > highScore) {
+        highScore = score;
+        highScoreDisplay.textContent = highScore;
+      }
     }
+  }
+}
+
+function draw() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  board.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value) {
+        context.fillStyle = COLORS[value - 1];
+        context.fillRect(colIndex * BLOCK_SIZE, rowIndex * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+      }
+    });
   });
-  score += linesCleared * 100;
-  currentScoreDisplay.textContent = score;
-  if (score > highScore) {
-    highScore = score;
-    highScoreDisplay.textContent = highScore;
-  }
-  if (score >= 1000) {
-    endGame(true);
-  }
-  showFlirtyMessage();
-}
-
-function showFlirtyMessage() {
-  const randomMessage = flirtyPhrases[Math.floor(Math.random() * flirtyPhrases.length)];
-  flirtyMessages.textContent = randomMessage;
-}
-
-function dropPiece() {
-  currentPiece.y++;
-  if (collide()) {
-    currentPiece.y--;
-    merge();
-    clearLines();
-    currentPiece = {
-      shape: shapes[Math.floor(Math.random() * shapes.length)],
-      x: 3,
-      y: 0,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)]
-    };
-    if (collide()) {
-      endGame(false);
-    }
-  }
-}
-
-function movePiece(direction) {
-  currentPiece.x += direction;
-  if (collide()) {
-    currentPiece.x -= direction;
-  }
-  moveSound.play();
-}
-
-function rotatePiece() {
-  const rotated = currentPiece.shape[0].map((_, i) => currentPiece.shape.map(row => row[i])).reverse();
-  const previousShape = currentPiece.shape;
-  currentPiece.shape = rotated;
-  if (collide()) {
-    currentPiece.shape = previousShape;
-  }
-  rotateSound.play();
+  currentShape.forEach((row, rowIndex) => {
+    row.forEach((value, colIndex) => {
+      if (value) {
+        context.fillStyle = COLORS[value - 1];
+        context.fillRect((currentPosition.x + colIndex) * BLOCK_SIZE, 
+                         (currentPosition.y + rowIndex) * BLOCK_SIZE, 
+                         BLOCK_SIZE, BLOCK_SIZE);
+      }
+    });
+  });
 }
 
 function updateTimer() {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  timerDisplay.textContent = `Time: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  if (timeLeft <= 0) {
-    endGame(false);
-  } else {
+  timerInterval = setInterval(() => {
     timeLeft--;
-  }
-}
-
-function endGame(success) {
-  clearInterval(timerInterval);
-  clearInterval(gameInterval);
-  if (success) {
-    message.style.display = 'block';
-    createBalloons();
-  } else {
-    alert('Game Over! Try again.');
-  }
-}
-
-function createBalloons() {
-  for (let i = 0; i < 50; i++) {
-    const balloon = document.createElement('div');
-    balloon.classList.add('balloon');
-    balloon.style.left = `${Math.random() * 100}vw`;
-    balloon.style.animationDuration = `${Math.random() * 5 + 3}s`;
-    document.body.appendChild(balloon);
-  }
-}
-
-// Touch Controls
-moveLeftButton.addEventListener('click', () => movePiece(-1));
-moveRightButton.addEventListener('click', () => movePiece(1));
-rotateButton.addEventListener('click', () => rotatePiece());
-dropButton.addEventListener('click', () => dropPiece());
-
-// Keyboard Controls
-document.addEventListener('keydown', event => {
-  if (event.key === 'ArrowLeft') {
-    movePiece(-1);
-  } else if (event.key === 'ArrowRight') {
-    movePiece(1);
-  } else if (event.key === 'ArrowDown') {
-    dropPiece();
-  } else if (event.key === 'ArrowUp') {
-    rotatePiece();
-  }
-});
-
-// Start Game
-startButton.addEventListener('click', () => {
-  startButton.style.display = 'none';
-  gameContainer.style.display = 'flex';
-  mobileControls.style.display = 'flex'; // Ensure mobile controls are visible
-  backgroundMusic.play().catch(() => {
-    alert("Tap anywhere to start the music!");
-  });
-  timerInterval = setInterval(updateTimer, 1000);
-  gameInterval = setInterval(() => {
-    dropPiece();
-    drawBoard();
+    timerDisplay.textContent = `Time: ${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? '0' : ''}${timeLeft % 60}`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      clearInterval(gameInterval);
+      message.classList.remove('hidden');
+    }
   }, 1000);
+}
+
+startButton.addEventListener('click', startGame);
+moveLeftButton.addEventListener('click', () => {
+  currentPosition.x--;
+  if (isCollision()) currentPosition.x++;
+});
+moveRightButton.addEventListener('click', () => {
+  currentPosition.x++;
+  if (isCollision()) currentPosition.x--;
+});
+rotateButton.addEventListener('click', () => {
+  currentShape = rotate(currentShape);
+  if (isCollision()) currentShape = rotate(currentShape, true);
+});
+dropButton.addEventListener('click', () => {
+  while (!isCollision()) {
+    currentPosition.y++;
+  }
+  currentPosition.y--;
+  mergeShape ();
+  clearLines();
+  generateNewShape();
 });
 
-// Fix for autoplay policy
-document.body.addEventListener('click', () => {
-  if (backgroundMusic.paused) {
-    backgroundMusic.play();
+function rotate(shape, reverse = false) {
+  return shape[0].map((val, index) => shape.map(row => reverse ? row[row.length - 1 - index] : row[index])).reverse();
+}
+
+document.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case 'ArrowLeft':
+      currentPosition.x--;
+      if (isCollision()) currentPosition.x++;
+      break;
+    case 'ArrowRight':
+      currentPosition.x++;
+      if (isCollision()) currentPosition.x--;
+      break;
+    case 'ArrowUp':
+      currentShape = rotate(currentShape);
+      if (isCollision()) currentShape = rotate(currentShape, true);
+      break;
+    case 'ArrowDown':
+      while (!isCollision()) {
+        currentPosition.y++;
+      }
+      currentPosition.y--;
+      mergeShape();
+      clearLines();
+      generateNewShape();
+      break;
   }
-  loadingScreen.classList.add('hidden');
-  container.classList.remove('hidden');
-  mobileControls.classList.remove('hidden'); // Show mobile controls
 });
+
+function resetGame() {
+  score = 0;
+  timeLeft = 120;
+  currentScoreDisplay.textContent = score;
+  highScoreDisplay.textContent = highScore;
+  board.forEach(row => row.fill(0));
+  message.classList.add('hidden');
+  loadingScreen.classList.remove('hidden');
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+}
+
+window.addEventListener('beforeunload', resetGame);
