@@ -6,6 +6,28 @@ body {
   color: #00ff9f;
   text-align: center;
   overflow: hidden;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#loadingScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #001eff, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .container {
