@@ -70,18 +70,10 @@ button:hover {
 }
 
 #gameContainer {
-  display: none;
   margin-top: 20px;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-#sidebar {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
 }
 
 #scoreboard {
@@ -91,26 +83,23 @@ button:hover {
   box-shadow: 0 0 10px #00ff9f;
 }
 
-#flirtyMessages {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #00b8ff;
-  font-size: 1.2rem;
-  color: #bd00ff;
-  animation: pulse 2s infinite;
+#balloonContainer {
+  margin-top: 30px;
 }
 
-@keyframes pulse {
-  0% { opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { opacity: 0.8; }
+#balloon {
+  width: 50px;
+  height: 70px;
+  background-color: #00ff9f;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff;
+  position: absolute;
+  animation: float 3s ease-in-out infinite;
 }
 
-canvas {
-  border: 5px solid #00ff9f;
-  background: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 0 20px #00b8ff;
+@keyframes float {
+  0% { transform: translateY(100vh); }
+  100% { transform: translateY(-100vh); }
 }
 
 #timerDisplay {
@@ -128,73 +117,12 @@ canvas {
   margin-top: 20px;
 }
 
-#mobileControls {
-  display: none;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-#mobileControls.visible {
-  display: flex; /* Show mobile controls when this class is added */
-}
-
-#mobileControls button {
-  padding: 15px 25px; /* Larger buttons for mobile */
-  font-size: 1.5rem;
-}
-
-.balloon {
-  position: absolute;
-  width: 50px;
-  height: 70px;
-  background: #00ff9f;
-  border-radius: 50%;
-  animation: float 5s ease-in infinite;
-  box-shadow: 0 0 10px #00ff9f, 0 0 20px #00b8ff;
-}
-
-@keyframes float {
-  0% { transform: translateY(100vh); }
-  100% { transform: translateY(-100vh); }
-}
-
-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://i.imgur.com/3QZQZ9q.png') repeat;
-  opacity: 0.2;
-  z-index: -1;
-}
-
 @media (max-width: 600px) {
   .title {
     font-size: 2rem;
   }
 
-  canvas {
-    width: 80vw;
-    height: 60vh;
-  }
-
-  #mobileControls {
-    display: none; /* Hide by default, show with JavaScript */
-  }
-
-  #sidebar {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #gameContainer {
-    flex-direction: column;
-  }
-
-  #scoreboard {
-    margin-bottom: 10px;
+  button {
+    font-size: 1.2rem;
   }
 }
