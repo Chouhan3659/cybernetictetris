@@ -29,7 +29,6 @@ let highScore = 0;
 let timeLeft = 120; // 2 minutes in seconds
 let timerInterval;
 let gameInterval;
-let gameActive = false;
 
 const board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
 
@@ -43,7 +42,12 @@ const shapes = [
   [[1, 1, 1], [0, 0, 1]] // J
 ];
 
-let currentPiece = generatePiece();
+let currentPiece = {
+  shape: shapes[Math.floor(Math.random() * shapes.length)],
+  x: 3,
+  y: 0,
+  color: COLORS[Math.floor(Math.random() * COLORS.length)]
+};
 
 const flirtyPhrases = [
   "You're a natural! 😉",
@@ -55,15 +59,6 @@ const flirtyPhrases = [
   "You're unstoppable! 🚀"
 ];
 
-function generatePiece() {
-  return {
-    shape: shapes[Math.floor(Math.random() * shapes.length)],
-    x: 3,
-    y: 0,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)]
-  };
-}
-
 function drawBlock(x, y, color) {
   context.fillStyle = color;
   context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
@@ -73,44 +68,64 @@ function drawBlock(x, y, color) {
 
 function drawBoard() {
   context.clearRect(0, 0, canvas.width, canvas.height);
-  board.forEach((row, y) => row.forEach((value, x) => value && drawBlock(x, y, value)));
-  currentPiece.shape.forEach((row, y) => row.forEach((value, x) => value && drawBlock(currentPiece.x + x, currentPiece.y + y, currentPiece.color)));
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value) {
+        drawBlock(x, y, value);
+      }
+    });
+  });
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value) {
+        drawBlock(currentPiece.x + x, currentPiece.y + y, currentPiece.color);
+      }
+    });
+  });
 }
 
 function collide() {
-  return currentPiece.shape.some((row, y) =>
-    row.some((value, x) => value && (board[currentPiece.y + y]?.[currentPiece.x + x] !== 0))
-  );
+  return currentPiece.shape.some((row, y) => {
+    return row.some((value, x) => {
+      return value && (board[currentPiece.y + y] && board[currentPiece.y + y][currentPiece.x + x]) !== 0;
+    });
+  });
 }
 
 function merge() {
-  currentPiece.shape.forEach((row, y) =>
-    row.forEach((value, x) => value && (board[currentPiece.y + y][currentPiece.x + x] = currentPiece.color))
-  );
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value) {
+        board[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+      }
+    });
+  });
 }
 
 function clearLines() {
-  let linesCleared = board.reduce((acc, row, y) => {
+  let linesCleared = 0;
+  board.forEach((row, y) => {
     if (row.every(cell => cell !== 0)) {
       board.splice(y, 1);
       board.unshift(Array(COLS).fill(0));
-      return acc + 1;
+      linesCleared++;
     }
-    return acc;
-  }, 0);
+  });
   score += linesCleared * 100;
-  updateScore();
-}
-
-function updateScore() {
   currentScoreDisplay.textContent = score;
-  if (score > highScore) highScoreDisplay.textContent = highScore = score;
-  if (score >= 1000) endGame(true);
+  if (score > highScore) {
+    highScore = score;
+    highScoreDisplay.textContent = highScore;
+  }
+  if (score >= 1000) {
+    endGame(true);
+  }
   showFlirtyMessage();
 }
 
 function showFlirtyMessage() {
-  flirtyMessages.textContent = flirtyPhrases[Math.floor(Math.random() * flirtyPhrases.length)];
+  const randomMessage = flirtyPhrases[Math.floor(Math.random() * flirtyPhrases.length)];
+  flirtyMessages.textContent = randomMessage;
 }
 
 function dropPiece() {
@@ -119,51 +134,108 @@ function dropPiece() {
     currentPiece.y--;
     merge();
     clearLines();
-    currentPiece = generatePiece();
-    if (collide()) endGame(false);
+    currentPiece = {
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      x: 3,
+      y: 0,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)]
+    };
+    if (collide()) {
+      endGame(false);
+    }
   }
 }
 
 function movePiece(direction) {
   currentPiece.x += direction;
-  if (collide()) currentPiece.x -= direction;
+  if (collide()) {
+    currentPiece.x -= direction;
+  }
   moveSound.play();
 }
 
 function rotatePiece() {
-  const prevShape = currentPiece.shape;
-  currentPiece.shape = currentPiece.shape[0].map((_, i) => currentPiece.shape.map(row => row[i])).reverse();
-  if (collide()) currentPiece.shape = prevShape;
+  const rotated = currentPiece.shape[0].map((_, i) => currentPiece.shape.map(row => row[i])).reverse();
+  const previousShape = currentPiece.shape;
+  currentPiece.shape = rotated;
+  if (collide()) {
+    currentPiece.shape = previousShape;
+  }
   rotateSound.play();
 }
 
 function updateTimer() {
-  if (--timeLeft <= 0) endGame(false);
-  timerDisplay.textContent = `Time: ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  timerDisplay.textContent = `Time: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  if (timeLeft <= 0) {
+    endGame(false);
+  } else {
+    timeLeft--;
+  }
 }
 
 function endGame(success) {
   clearInterval(timerInterval);
   clearInterval(gameInterval);
-  gameActive = false;
-  message.style.display = success ? 'block' : 'none';
-  if (!success) alert('Game Over! Try again.');
+  if (success) {
+    message.style.display = 'block';
+    createBalloons();
+  } else {
+    alert('Game Over! Try again.');
+  }
 }
+
+function createBalloons() {
+  for (let i = 0; i < 50; i++) {
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
+    balloon.style.left = `${Math.random() * 100}vw`;
+    balloon.style.animationDuration = `${Math.random() * 5 + 3}s`;
+    document.body.appendChild(balloon);
+  }
+}
+
+// Touch Controls
+moveLeftButton.addEventListener('click', () => movePiece(-1));
+moveRightButton.addEventListener('click', () => movePiece(1));
+rotateButton.addEventListener('click', () => rotatePiece());
+dropButton.addEventListener('click', () => dropPiece());
+
+// Keyboard Controls
+document.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft') {
+    movePiece(-1);
+  } else if (event.key === 'ArrowRight') {
+    movePiece(1);
+  } else if (event.key === 'ArrowDown') {
+    dropPiece();
+  } else if (event.key === 'ArrowUp') {
+    rotatePiece();
+  }
+});
 
 // Start Game
 startButton.addEventListener('click', () => {
-  if (gameActive) return;
-  gameActive = true;
   startButton.style.display = 'none';
   gameContainer.style.display = 'flex';
-  mobileControls.style.display = 'flex';
-  backgroundMusic.play().catch(() => alert("Tap anywhere to start the music!"));
+  mobileControls.style.display = 'flex'; // Ensure mobile controls are visible
+  backgroundMusic.play().catch(() => {
+    alert("Tap anywhere to start the music!");
+  });
   timerInterval = setInterval(updateTimer, 1000);
-  gameInterval = setInterval(() => (dropPiece(), drawBoard()), 1000);
+  gameInterval = setInterval(() => {
+    dropPiece();
+    drawBoard();
+  }, 1000);
 });
 
+// Fix for autoplay policy
 document.body.addEventListener('click', () => {
-  backgroundMusic.play();
+  if (backgroundMusic.paused) {
+    backgroundMusic.play();
+  }
   loadingScreen.classList.add('hidden');
   container.classList.remove('hidden');
+  mobileControls.classList.remove('hidden'); // Show mobile controls
 });
