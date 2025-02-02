@@ -3,46 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybernetic Tetris</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Mini Tetris Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"> <!-- Cybernetic font -->
+    <style>
+        body {
+            background: radial-gradient(circle, #00ff9f, #00b8ff, #001eff, #bd00ff, #d600ff);
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #00ff9f, 0 0 30px #00ff9f;
+        }
+        #startButton {
+            background-color: #00b8ff;
+            border: none;
+            padding: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 5px #00b8ff;
+        }
+        #startButton:hover {
+            background-color: #00ff9f;
+            text-shadow: 0 0 15px #00ff9f;
+        }
+        #message {
+            font-size: 2rem;
+            visibility: hidden;
+            margin-top: 50px;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 0 10px #fff, 0 0 20px #d600ff;
+        }
+        #score {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-top: 20px;
+            text-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff;
+        }
+        #funMessages {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1rem;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ff9f;
+            padding: 10px;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            visibility: hidden;
+        }
+        #funMessages p {
+            margin: 5px;
+        }
+        #gameContainer {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 600px;
+            max-height: 800px;
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 0 20px #00ff9f;
+        }
+        .tetrisBlock {
+            width: 30px;
+            height: 30px;
+            background-color: #00ff9f;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #00b8ff;
+        }
+        .balloonAnimation {
+            animation: pop 1s ease-out forwards;
+        }
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        .mobileControls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .mobileButton {
+            background-color: #00b8ff;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 0 10px #00b8ff;
+        }
+        .mobileButton:hover {
+            background-color: #00ff9f;
+        }
+    </style>
 </head>
 <body>
-    <div id="loadingScreen">
-        <p>Tap anywhere to start!</p>
-    </div>
-    <div class="container hidden">
-        <h1 class="title">BEAT IT TO REVEAL IT</h1>
-        <button id="startButton">hehe lets play :P</button>
-        <div id="gameContainer" class="hidden">
-            <div id="sidebar">
-                <div id="scoreboard">
-                    <div>Score: <span id="currentScore">0</span></div>
-                    <div>High Score: <span id="highScore">0</span></div>
-                </div>
-                <div id="flirtyMessages">
-                    <p>Drop it like it's hot! 😘</p>
-                </div>
-            </div>
-            <canvas id="tetris"></canvas>
-            <div id="timerDisplay">Time: 2:00</div>
-            <div id="mobileControls">
-                <button id="moveLeft">←</button>
-                <button id="moveRight">→</button>
-                <button id="rotate">↻</button>
-                <button id="drop">↓</button>
-            </div>
-        </div>
-        <div id="message" class="hidden">
-            <p>You're too cute to complete it 💖</p>
-        </div>
-    </div>
-    
-    <audio id="backgroundMusic" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-stereo-hearts-1681.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+
+    <h1 id="title">BEAT IT TO REVEAL IT</h1>
+    <button id="startButton">hehe lets play :P</button>
+    <div id="message">you're too cute to complete it</div>
+    <div id="score">Score: 0</div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/Stereo_Hearts.mp3" type="audio/mp3">
     </audio>
 
-    <script src="script.js"></script>
+    <div id="funMessages">
+        <p>Ooh, you're making me nervous!</p>
+        <p>Nice move! Keep going, I like it.</p>
+        <p>Is that a Tetris block, or are you just happy to see me?</p>
+    </div>
+
+    <div id="gameContainer">
+        <!-- Tetris Game content will go here -->
+    </div>
+
+    <div class="mobileControls">
+        <button class="mobileButton" id="leftButton">←</button>
+        <button class="mobileButton" id="downButton">↓</button>
+        <button class="mobileButton" id="rightButton">→</button>
+    </div>
+
+    <script>
+        let startButton = document.getElementById('startButton');
+        let gameContainer = document.getElementById('gameContainer');
+        let message = document.getElementById('message');
+        let scoreElement = document.getElementById('score');
+        let funMessages = document.getElementById('funMessages');
+        let bgMusic = document.getElementById('bgMusic');
+        let score = 0;
+        let timer;
+        let gameStarted = false;
+
+        // Play background music when page loads
+        bgMusic.play();
+
+        // Handle game start
+        startButton.addEventListener('click', function() {
+            startButton.style.display = 'none';
+            gameContainer.style.display = 'block';
+            funMessages.style.visibility = 'visible';
+            gameStarted = true;
+            startGame();
+        });
+
+        function startGame() {
+            let timeLeft = 120;
+            timer = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endGame();
+                }
+                timeLeft--;
+            }, 1000);
+
+            setInterval(function() {
+                if (gameStarted) {
+                    score++; 
+                    updateScore();
+                    if (score >= 10) {
+                        showBalloons();
+                    }
+                    if (score >= 20) {
+                        clearInterval(timer);
+                        endGame();
+                    }
+                }
+            }, 100);
+        }
+
+        function endGame() {
+            gameStarted = false;
+            message.style.visibility = 'visible';
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `Score: ${score}`;
+        }
+
+        function showBalloons() {
+            let balloon = document.createElement('div');
+            balloon.classList.add('balloonAnimation');
+            balloon.style.left = `${Math.random() * window.innerWidth}px`;
+            balloon.style.top = `${Math.random() * window.innerHeight}px`;
+            document.body.appendChild(balloon);
+            setTimeout(function() {
+                balloon.remove();
+            }, 1000);
+        }
+
+        // Mobile Controls
+        let leftButton = document.getElementById('leftButton');
+        let downButton = document.getElementById('downButton');
+        let rightButton = document.getElementById('rightButton');
+
+        leftButton.addEventListener('click', () => {
+            // Implement move left
+        });
+
+        downButton.addEventListener('click', () => {
+            // Implement move down
+        });
+
+        rightButton.addEventListener('click', () => {
+            // Implement move right
+        });
+    </script>
+
 </body>
 </html>
