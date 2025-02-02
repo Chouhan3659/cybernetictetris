@@ -1,52 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cybernetic Tetris</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat It To Reveal It</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="loadingScreen">
-    <p>Tap anywhere to start!</p>
-  </div>
-  <div class="container hidden">
-    <h1 class="title">BEAT IT TO REVEAL IT</h1>
-    <button id="startButton">hehe lets play :P</button>
-    <div id="gameContainer" class="hidden">
-      <div id="sidebar">
-        <div id="scoreboard">
-          <div>Score: <span id="currentScore">0</span></div>
-          <div>High Score: <span id="highScore">0</span></div>
+    <div id="loadingScreen">Click anywhere to start the game!</div>
+    <div class="container hidden">
+        <div class="title">BEAT IT TO REVEAL IT</div>
+        <button id="startButton">Hehe, Let's Play :P</button>
+        <div id="gameContainer">
+            <canvas id="tetris" width="300" height="600"></canvas>
+            <div id="sidebar">
+                <div id="scoreboard">
+                    <h2>Score: <span id="currentScore">0</span></h2>
+                    <h2>High Score: <span id="highScore">0</span></h2>
+                </div>
+                <div id="flirtyMessages"></div>
+            </div>
         </div>
-        <div id="flirtyMessages">
-          <p>Drop it like it's hot! 😘</p>
+        <div id="mobileControls">
+            <button id="moveLeft">←</button>
+            <button id="rotate">⟳</button>
+            <button id="moveRight">→</button>
+            <button id="drop">↓</button>
         </div>
-      </div>
-      <canvas id="tetris" width="300" height="600"></canvas>
-      <div id="timerDisplay">Time: 2:00</div>
-      <!-- Mobile Controls -->
-      <div id="mobileControls" class="hidden">
-        <button id="moveLeft">←</button>
-        <button id="moveRight">→</button>
-        <button id="rotate">↻</button>
-        <button id="drop">↓</button>
-      </div>
+        <div id="timerDisplay">Time: 2:00</div>
+        <div id="message">You're too cute to complete it!</div>
     </div>
-    <div id="message" class="hidden">
-      <p>you're too cute to complete it</p>
-    </div>
-  </div>
-  <!-- Background Music -->
-  <audio id="backgroundMusic" loop>
-    <source src="https://assets.mixkit.co/music/preview/mixkit-stereo-hearts-1681.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-  <!-- Sound Effects -->
-  <audio id="moveSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-game-notification-212.mp3"></audio>
-  <audio id="rotateSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3"></audio>
-  <audio id="dropSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
-  <script src="script.js"></script>
+    <audio id="backgroundMusic" src="https://www.youtube.com/watch?v=jEFChG-dVv0" loop></audio>
+    <audio id="moveSound" src="move-sound.mp3"></audio>
+    <audio id="rotateSound" src="rotate-sound.mp3"></audio>
+    <audio id="dropSound" src="drop-sound.mp3"></audio>
+    <script src="script.js"></script>
 </body>
 </html>
