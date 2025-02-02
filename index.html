@@ -3,38 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beat It To Reveal It</title>
+    <title>Click the Balloon!</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="loadingScreen">Click anywhere to start the game!</div>
     <div class="container hidden">
-        <div class="title">BEAT IT TO REVEAL IT</div>
-        <button id="startButton">Hehe, Let's Play :P</button>
+        <div class="title">CLICK THE BALLOON</div>
+        <button id="startButton">Start Game</button>
         <div id="gameContainer">
-            <canvas id="tetris" width="300" height="600"></canvas>
-            <div id="sidebar">
-                <div id="scoreboard">
-                    <h2>Score: <span id="currentScore">0</span></h2>
-                    <h2>High Score: <span id="highScore">0</span></h2>
-                </div>
-                <div id="flirtyMessages"></div>
+            <div id="scoreboard">
+                <h2>Score: <span id="score">0</span></h2>
+            </div>
+            <div id="balloonContainer">
+                <!-- Balloon will be placed here -->
             </div>
         </div>
-        <div id="mobileControls">
-            <button id="moveLeft">←</button>
-            <button id="rotate">⟳</button>
-            <button id="moveRight">→</button>
-            <button id="drop">↓</button>
-        </div>
-        <div id="timerDisplay">Time: 2:00</div>
-        <div id="message">You're too cute to complete it!</div>
+        <div id="timerDisplay">Time: 0</div>
+        <div id="message">You're too cute to catch me! 😏</div>
     </div>
     <audio id="backgroundMusic" src="https://www.youtube.com/watch?v=jEFChG-dVv0" loop></audio>
-    <audio id="moveSound" src="move-sound.mp3"></audio>
-    <audio id="rotateSound" src="rotate-sound.mp3"></audio>
-    <audio id="dropSound" src="drop-sound.mp3"></audio>
+    <audio id="clickSound" src="click-sound.mp3"></audio>
     <script src="script.js"></script>
 </body>
 </html>
