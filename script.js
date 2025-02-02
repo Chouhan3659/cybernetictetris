@@ -202,7 +202,7 @@ moveRightButton.addEventListener('click', () => movePiece(1));
 rotateButton.addEventListener('click', () => rotatePiece());
 dropButton.addEventListener('click', () => dropPiece());
 
-// Keyboard Controls
+// Keyboard Controls (Fallback for Desktop)
 document.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft') {
     movePiece(-1);
